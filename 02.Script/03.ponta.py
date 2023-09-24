@@ -1,6 +1,6 @@
 # ------ ライブラリのインポート ------ 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -13,13 +13,12 @@ import json
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
-import tkinter.simpledialog as simpledialog
-
+from PIL import Image
+import io
 
 
 # ------ 画像を縦方向または横方向に結合する関数 ------ 
 def get_concat_image(img1, img2, direction='v'):
-    from PIL import Image
     if direction == 'v':
         new_img = Image.new('RGB', (max(img1.width, img2.width), (img1.height + img2.height)))
         new_img.paste(img1, (0, 0))
@@ -36,8 +35,6 @@ def get_concat_image(img1, img2, direction='v'):
 
 # ------ スクリーンショットを取得し、スクロールバーを削除する関数 ------ 
 def get_screenshot_image(driver):
-    from PIL import Image
-    import io
     c_width, c_height, i_width, i_height = driver.execute_script(
         'return [document.documentElement.clientWidth, document.documentElement.clientHeight, window.innerWidth, window.innerHeight]')
     image = Image.open(io.BytesIO(driver.get_screenshot_as_png()))
@@ -81,7 +78,7 @@ downloadsFilePath = FilePath
 
 
 # ------ ChromeDriver のオプション指定 ------
-options = Options()
+chrome_options = webdriver.ChromeOptions()
 prefs = {
     "plugins.always_open_pdf_externally": True,                                              # PDFをブラウザのビューワーで開かせない
     "credentials_enable_service": False,                                                     # 認証情報(ログイン情報やパスワード)の自動保存を無効
@@ -90,29 +87,35 @@ prefs = {
     "download.default_directory": os.path.abspath(downloadsFilePath) + r"\\",                # ダウンロードディレクトリのパスを設定
     "directory_upgrade": True                                                                # 新しい設定を有効にする
 }
-options.add_argument('--ignore-certificate-errors')                                          # 証明書エラーを無視する
-options.add_argument('--ignore-ssl-errors')                                                  # SSLエラーを無視する
-options.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])  # 自動化やログの有効化を除外する
-options.add_experimental_option("prefs", prefs)                                              # 定義したプリファレンスを設定オプションに追加
+chrome_options.add_argument('--ignore-certificate-errors')                                          # 証明書エラーを無視する
+chrome_options.add_argument('--ignore-ssl-errors')                                                  # SSLエラーを無視する
+chrome_options.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])  # 自動化やログの有効化を除外する
+chrome_options.add_experimental_option("prefs", prefs)                                                 # 定義したプリファレンスを設定オプションに追加
 
 
 
 # ------ ChromeDriver の起動 ------
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-driver.get('https://www.point-portal.auone.jp/point?medid=aupaymkt&srcid=web&serial=0016')
+driver_path = ChromeDriverManager().install()
+service =Service(driver_path)
+driver = webdriver.Chrome(service=service, options=chrome_options)
+driver.get('https://www.amazon.co.jp/mypoints/')
 time.sleep(3)
-wait = WebDriverWait(driver=driver, timeout=30)
-wait.until(EC.visibility_of_all_elements_located)
-
+wait = WebDriverWait(driver, 10)
+element = wait.until(EC.visibility_of_all_elements_located)
 
 
 
 ###################################################
 ###############   メイン処理開始   #################
 ###################################################
-messagebox.showwarning("手動でログイン処理をお願いします!","ログイン画面上の「ユーザID」と「パスワード」を入力し、手動でログインしてください。\nログインが終わり画面が遷移したら、このポップアップの「OK」をクリックしてください。")
+# ------ 手動ログオン ------
+sub_win = tk.Tk()
+sub_win.withdraw()
+sub_win.attributes("-topmost",True)
+messagebox.showwarning("手動でログイン処理をお願いします!","ログイン画面上の「ユーザID」と「パスワード」を入力し、手動でログインしてください。\nログインが終わり画面が遷移したら、このポップアップの「OK」をクリックしてください。", parent=sub_win)
+sub_win.attributes("-topmost",False)
 driver.maximize_window()
-driver.find_element(By.CLASS_NAME, "point-overview__box").click()
+
 
 
 # ------ 期間の絞り込み ------

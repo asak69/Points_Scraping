@@ -12,6 +12,7 @@ from PIL import Image
 import io
 import time
 import pandas as pd
+import tkinter as tk
 from tkinter import messagebox
 
 
@@ -217,6 +218,7 @@ element = wait.until(EC.visibility_of_all_elements_located)
 ###################################################
 ###############   メイン処理開始   #################
 ###################################################
+# ------ 手動ログオン ------
 sub_win = tk.Tk()
 sub_win.withdraw()
 sub_win.attributes("-topmost",True)

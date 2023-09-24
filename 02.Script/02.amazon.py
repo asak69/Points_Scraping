@@ -13,9 +13,9 @@ import time
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
-import tkinter.simpledialog as simpledialog
 from PIL import Image
 import io
+
 
 
 # ------ 画像を縦方向または横方向に結合する関数 ------ 
@@ -153,6 +153,7 @@ sub_win.attributes("-topmost",True)
 messagebox.showwarning("手動でログイン処理をお願いします!","ログイン画面上の「ユーザID」と「パスワード」を入力し、手動でログインしてください。\nログインが終わり画面が遷移したら、このポップアップの「OK」をクリックしてください。", parent=sub_win)
 sub_win.attributes("-topmost",False)
 driver.maximize_window()
+
 
 
 # ------ 期間の絞り込み（カレンダー） ------

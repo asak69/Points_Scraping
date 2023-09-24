@@ -37,7 +37,7 @@ def app():
         jsonfile = codecs.open('01.Config\\00.temp.json', 'w', 'utf-8')
         json.dump(str, jsonfile, indent=2, ensure_ascii=False)
         jsonfile.close()
-        msg = point+"の取得を開始しました─=≡Σ((( つ•̀ω•́)つ"
+        msg = point+"の取得を開始しました!"
         var.set(msg) 
 
         time.sleep(3)

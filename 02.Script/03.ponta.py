@@ -98,11 +98,11 @@ chrome_options.add_experimental_option("prefs", prefs)                          
 driver_path = ChromeDriverManager().install()
 service =Service(driver_path)
 driver = webdriver.Chrome(service=service, options=chrome_options)
-driver.get('https://www.amazon.co.jp/mypoints/')
+driver.get('https://www.point-portal.auone.jp/point?medid=aupaymkt&srcid=web&serial=0016')
 time.sleep(3)
 wait = WebDriverWait(driver, 10)
 element = wait.until(EC.visibility_of_all_elements_located)
-
+driver.find_element(By.CLASS_NAME, "login-button").click()
 
 
 ###################################################
@@ -115,7 +115,7 @@ sub_win.attributes("-topmost",True)
 messagebox.showwarning("手動でログイン処理をお願いします!","ログイン画面上の「ユーザID」と「パスワード」を入力し、手動でログインしてください。\nログインが終わり画面が遷移したら、このポップアップの「OK」をクリックしてください。", parent=sub_win)
 sub_win.attributes("-topmost",False)
 driver.maximize_window()
-
+driver.find_element(By.CLASS_NAME, "point-overview__box").click()
 
 
 # ------ 期間の絞り込み ------
